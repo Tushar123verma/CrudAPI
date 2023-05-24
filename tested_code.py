@@ -1,36 +1,25 @@
 from opcua import Client
+from opcua.crypto import uacrypto
+import traceback
 import time
-
-
-def connect_to_server(url):
-    client = Client(url)
-    client.connect()
-    print("Connected to server")
-    return client
-
-
-def disconnect_from_server(client):
-    client.disconnect()
-    print("Disconnected from server")
-
-
-if __name__ == '__main__':
-    server_url = "opc.tcp://172.20.46.31:4840/"
-    client2 = connect_to_server(server_url)
-    node = client2.get_node("ns=4;s=ESD_PB_1")
-    #value = node.get_value()
-    #print("Variable value:", value)
-    while True:
-        value = node.get_value()
-        print("Variable value:", value)
+while True:
+    def uaConnect():
+        client = Client("opc.tcp://172.20.46.31:4840/")
         try:
-            client2.connect()
-            print("Reconnected to server")
-            break  # Exit the loop if reconnection is successful
+            client.set_user("BPCL")
+            client.set_password("adm")
+            client.connect()
+            resp = client.get_node("ns=4;s=ESD_PB_1")
+            while True:
+                client_value = resp.get_value()
+                print(client_value)
+                time.sleep(2)
+            #client.disconnect()
+            #return "Done"
         except Exception as e:
-            print("Reconnection failed. Retrying in 5 seconds...")
-            time.sleep(5)
-        value = node.get_value()
-        print("Variable value:", value)
+            print (traceback.format_exc())
+            #client.disconnect()
+            return "Done"
 
-    disconnect_from_server(client2)
+    if __name__ == "__main__":
+        uaConnect()
