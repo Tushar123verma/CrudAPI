@@ -20,6 +20,8 @@ while True:
             print (traceback.format_exc())
             #client.disconnect()
             return "Done"
+        #finally:
+            #client.disconnect()
 
     if __name__ == "__main__":
         uaConnect()
